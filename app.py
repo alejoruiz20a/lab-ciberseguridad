@@ -3,6 +3,7 @@ import sqlite3
 
 import requests
 from flask import Flask, jsonify, render_template_string, request, send_file
+from werkzeug.security import safe_join
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "app.db")
@@ -34,8 +35,8 @@ def login():
     conn = get_db()
     cur = conn.cursor()
     cur.execute(
-        "SELECT username FROM users WHERE username = '" + username
-        + "' AND password = '" + password + "'"
+        "SELECT username FROM users WHERE username = ? AND password = ?",
+        (username, password),
     )
     row = cur.fetchone()
     conn.close()
@@ -49,7 +50,7 @@ def search():
     q = request.args.get("q", "")
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT id, title FROM notes WHERE title LIKE '%" + q + "%'")
+    cur.execute("SELECT id, title FROM notes WHERE title LIKE ?", ("%" + q + "%",))
     rows = cur.fetchall()
     conn.close()
     return jsonify([{"id": r[0], "title": r[1]} for r in rows])
@@ -64,8 +65,8 @@ def greet():
 @app.route("/download")
 def download():
     filename = request.args.get("file", "")
-    path = os.path.join(FILES_DIR, filename)
-    if not os.path.isfile(path):
+    path = safe_join(FILES_DIR, filename)
+    if path is None or not os.path.isfile(path):
         return jsonify({"error": "archivo no encontrado"}), 404
     return send_file(path)
 
