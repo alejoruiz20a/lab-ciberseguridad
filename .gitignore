@@ -3,4 +3,5 @@ app.db
 .env
 __pycache__/
 .pytest_cache/
-evidencias/
+evidencias/*
+!evidencias/figuras/

@@ -1,0 +1,5 @@
+  Nunca concatenes entrada del usuario en consultas SQL; usa parámetros (?).
+  Nunca pases entrada del usuario a send_file/open sin safe_join.
+  Nunca escribas secretos en el código; léelos de variables de entorno.
+  No uses render_template_string con entrada del usuario concatenada.
+  Antes de proponer dependencias, fija versiones sin CVE conocidos.
